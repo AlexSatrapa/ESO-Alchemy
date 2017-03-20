@@ -4,163 +4,212 @@
 <title>Maralie's Alchemy Calculator</title>
 <script type="text/JavaScript">
 var reagents = {
-	"Beetle Scuttle": (
-		"Lower Spell Resistance (breach)",
+	"Beetle Scuttle": [
+		"Lower Spell Resist (breach)",
 		"Reduce Damage Taken (protection)",
 		"Increase Armor",
 		"Increase Healing Taken (vitality)",
-		),
-	"Blessed Thistle":(
+		],
+	"Blessed Thistle": [
 		"Restore Stamina",
 		"Ravage Health",
 		"Increase Weapon Power",
 		"Speed",
-		),
-	"Blue Entoloma":(
+		],
+	"Blue Entoloma": [
 		"Ravage Magicka",
 		"Restore Health",
 		"Ravage Ultimate (cowardice)",
-		"Invisibility",
-		),
-	"Bugloss":(
+		"Invisible",
+		],
+	"Bugloss": [
 		"Increase Spell Resist",
 		"Ravage Ultimate (cowardice)",
 		"Restore Health",
 		"Restore Magicka",
-		),
-	"Butterfly Wing":(
+		],
+	"Butterfly Wing": [
 		"Restore Health",
 		"Lingering Health",
 		"Lower Critical Rating (uncertainty)",
 		"Increase Healing Taken (vitality)",
-		),
-	"Columbine":(
+		],
+	"Columbine": [
 		"Restore Health",
 		"Restore Stamina",
 		"Restore Magicka",
 		"Unstoppable",
-		),
-	"Cornflower":(
+		],
+	"Cornflower": [
 		"Restore Magicka",
 		"Ravage Health",
 		"Increase Spell Power",
 		"Detection",
-		),
-	"Dragonthorn":(
+		],
+	"Dragonthorn": [
 		"Increase Weapon Power",
-		"Reduce Physical Resistance (fracture)",
+		"Reduce Physical Resist (fracture)",
 		"Restore Stamina",
 		"Weapon Critical",
-		),
-	"Emetic Russula":(
+		],
+	"Emetic Russula": [
 		"Ravage Health",
 		"Ravage Stamina",
 		"Ravage Magicka",
 		"Stun (entrapment)",
-		),
-	"Fleshfly Larva":(
+		],
+	"Fleshfly Larva": [
 		"Ravage Stamina",
 		"Gradual Ravage Health",
 		"Increase Damage Taken (vulnerability)",
 		"Increase Healing Taken (vitality)",
-		),
-	"Imp Stool":(
+		],
+	"Imp Stool": [
 		"Reduce Damage Dealt (maim)",
 		"Increase Armor",
 		"Ravage Stamina",
 		"Lower Critical Damage (enervation)",
-		),
-	"Lady’s Smock":(
+		],
+	"Lady’s Smock": [
 		"Increase Spell Power",
 		"Lower Spell Resist (breach)",
 		"Restore Magicka",
 		"Spell Critical",
-		),
-	"Luminous Russula":(
+		],
+	"Luminous Russula": [
 		"Ravage Stamina",
 		"Restore Health",
 		"Reduce Damage Dealt (maim)",
 		"Reduce Speed (hindrance)",
-		),
-	"Mountain Flower":(
+		],
+	"Mountain Flower": [
 		"Increase Armor",
 		"Reduce Damage Dealt (maim)",
 		"Restore Health",
 		"Restore Stamina",
-		),
-	"Mudcrab Chitin":(
+		],
+	"Mudcrab Chitin": [
 		"Increase Spell Resist",
 		"Reduce Damage Taken (protection)",
 		"Increase Armor",
 		"Reduce Healing Taken (defile)",
-		),
-	"Namira’s Rot":(
+		],
+	"Namira’s Rot": [
 		"Spell Critical",
 		"Invisible",
 		"Speed",
 		"Unstoppable",
-		),
-	"Nightshade":(
+		],
+	"Nightshade": [
 		"Ravage Health",
 		"Gradual Ravage Health",
 		"Reduce Damage Taken (protection)",
 		"Reduce Healing Taken (defile)",
-		),
-	"Nirnroot":(
+		],
+	"Nirnroot": [
 		"Ravage Health",
 		"Lower Critical Damage (enervation)",
 		"Lower Critical Rating (uncertainty)",
 		"Invisible",
-		),
-	"Scrib Jelly":(
+		],
+	"Scrib Jelly": [
 		"Ravage Magicka",
-		"Increase Damage Taken  (vulnerability)",
+		"Increase Damage Taken (vulnerability)",
 		"Speed",
 		"Lingering Health",
-		),
-	"Spider Egg":(
+		],
+	"Spider Egg": [
 		"Reduce Speed (hindrance)",
 		"Lingering Health",
-		"Invisibile",
+		"Invisible",
 		"Reduce Healing Taken (defile)",
-		),
-	"Stinkhorn":(
-		"Reduce Physical Resistance (fracture)",
+		],
+	"Stinkhorn": [
+		"Reduce Physical Resist (fracture)",
 		"Increase Weapon Power",
 		"Ravage Health",
 		"Ravage Stamina",
-		),
-	"Torchbug Thorax":(
-		"Reduce Physical Resistance (fracture)",
+		],
+	"Torchbug Thorax": [
+		"Reduce Physical Resist (fracture)",
 		"Detection",
 		"Lower Critical Damage (enervation)",
 		"Increase Healing Taken (vitality)",
-		),
-	"Violet Coprinus":(
-		"Lower Spell Resistance (breach)",
+		],
+	"Violet Coprinus": [
+		"Lower Spell Resist (breach)",
 		"Increase Spell Power",
 		"Ravage Health",
 		"Ravage Magicka",
-		),
-	"Water Hyacinth":(
+		],
+	"Water Hyacinth": [
 		"Restore Health",
 		"Weapon Critical",
 		"Spell Critical",
 		"Stun (entrapment)",
-		),
-	"Whitecap":(
+		],
+	"Whitecap": [
 		"Ravage Ultimate (cowardice)",
-		"Increase Spell Resistance",
+		"Increase Spell Resist",
 		"Ravage Magicka",
 		"Detection",
-		),
-	"Wormwood":(
+		],
+	"Wormwood": [
 		"Weapon Critical",
 		"Detection",
 		"Reduce Speed (hindrance)",
 		"Unstoppable",
-		)
+		],
 	}
+
+var benefits = {};
+
+for (var reagent in reagents) {
+	for (var benefit in reagents[reagent]) {
+		benefit_name = reagents[reagent][benefit];
+		if (!(benefit_name in benefits)) {
+			benefits[benefit_name] = [];
+			}
+		benefits[benefit_name].push(reagent);
+		}
+	}
+
+function calculate_reagents_to_display(selected_benefits) {
+	reagents_to_display = {};
+
+	for (var reagent in reagents) {
+		for (var benefit in reagents[reagent]) {
+			benefit_name = reagents[reagent][benefit];
+			if (selected_benefits.indexOf(benefit_name) >= 0) {
+				reagents_to_display[reagent] = 1;
+				}
+			}
+		}
+	return reagents_to_display;
+	}
+
+function populate_benefits_list() {
+	benefits_listing = document.getElementById("benefits");
+	benefits_listing.innerHTML = '';
+	for (var benefit in benefits) {
+		benefits_listing.innerHTML += '<input type="checkbox" name="' + benefit + '">' + benefit + '</input><br/>';
+		}
+	return false;
+	}
+
 </script>
 </head>
+<body>
+<div id="calculator-body">
+<div id="benefits">
+</div>
+<div id="reagents">
+</div>
+<button name="Clear" value="Clear" onClick="JavaScript:populate_benefits_list()">Clear</button>
+</div>
+</body>
+<script type="text/JavaScript">
+populate_benefits_list();
+calculate_reagents_to_display([]);
+</script>
 </html>
