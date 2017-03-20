@@ -188,28 +188,46 @@ function calculate_reagents_to_display(selected_benefits) {
 	return reagents_to_display;
 	}
 
+function refresh_reagents(reagents_to_display) {
+	reagents_listing = document.getElementById("reagents");
+	reagents_listing.innerHTML = "<ul>\n";
+	for (var reagent in reagents_to_display) {
+		reagent_name = reagents_to_display[reagent];
+		reagents_listing.innerHTML += "<li>" + reagent_name + "</li>\n";
+		}
+	reagents_listing.innerHTML += "</ul>\n";
+	}
+
 function populate_benefits_list() {
 	benefits_listing = document.getElementById("benefits");
 	benefits_listing.innerHTML = '';
 	for (var benefit in benefits) {
-		benefits_listing.innerHTML += '<input type="checkbox" name="' + benefit + '">' + benefit + '</input><br/>';
+		benefits_listing.innerHTML += '<input type="checkbox" name="benefit" value="' + benefit + '">' + benefit + '</input><br/>';
 		}
 	return false;
 	}
 
+function collate_benefits() {
+	checked_benefits = document.querySelectorAll('*[name="benefit"]:checked');
+	collated = [];
+	for (let benefit of checked_benefits.keys()) {
+		collated.push(checked_benefits.item(benefit).value);
+		}
+	return collated;
+	}
 </script>
 </head>
 <body>
 <div id="calculator-body">
 <div id="benefits">
 </div>
+<button name="Clear" value="Clear" onClick="JavaScript:populate_benefits_list()">Clear</button>
 <div id="reagents">
 </div>
-<button name="Clear" value="Clear" onClick="JavaScript:populate_benefits_list()">Clear</button>
 </div>
 </body>
 <script type="text/JavaScript">
 populate_benefits_list();
-calculate_reagents_to_display([]);
+refresh_reagents([]);
 </script>
 </html>
