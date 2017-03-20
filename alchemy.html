@@ -252,10 +252,11 @@ function collate_benefits() {
 
 function populate_benefits_list() {
 	benefits_listing = document.getElementById("benefits");
-	benefits_listing = '';
+	benefits_listing.innerHTML = '';
 	for (i in benefits) {
-		benefits_listing.innerHTML += '<input type="checkbox" name="benefit" value="' + benefits[i] + '">' + benefits[i] + '</input><br/>';
-		}
+		benefit_item = '<input type="checkbox" name="benefit" value="' + benefits[i] + '">' + benefits[i] + "</input><br/>\n";
+		benefits_listing.innerHTML += benefit_item;
+		};
 	return true;
 	}
 </script>
