@@ -228,17 +228,21 @@ var benefits_reagents = [];
 
 function produce_benefits_reagents_list() {
 	benefits_reagents = [];
-	for (var benefit in benefits) {
-		benefits_reagents.push([benefit,[]]);
+	for (var b_idx in benefits) {
+		benefit_name = benefits[b_idx]
+		benefits_reagents.push([benefit_name,[]]);
 		}
-	for (var reagent_benefits in reagents_benefits) {
-		reagent = reagent_benefits[0];
+	for (var rb_idx in reagents_benefits) {
+		reagent_benefits = reagents_benefits[rb_idx];
+		reagent_name = reagent_benefits[0];
 		benefit_set = reagent_benefits[1];
-		for (var benefit in benefit_set) {
-			index = benefits.indexOf(benefit);
-			benefits_reagents[index][1].push(reagent);
+		for (var idx in benefit_set) {
+			benefit_name = benefit_set[idx];
+			index = benefits.indexOf(benefit_name);
+			benefits_reagents[index][1].push(reagent_name);
 			}
 		}
+	return benefits_reagents;
 	}
 
 function collate_benefits() {
