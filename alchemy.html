@@ -311,7 +311,8 @@ function reagents_for_benefit(benefit_name) {
 	}
 
 function two_reagent_benefits(reagent_a, reagent_b) {
-	mixture_benefits = [];
+	mixture_benefits = []; // benefits that are activated
+	passive_benefits = []; // benefits that are available
 	reagent_a_benefits = benefits_for_reagent(reagent_a);
 	reagent_b_benefits = benefits_for_reagent(reagent_b);
 	for (a in reagent_a_benefits) {
@@ -320,44 +321,48 @@ function two_reagent_benefits(reagent_a, reagent_b) {
 			b_benefit = reagent_b_benefits[b];
 			if (a_benefit == b_benefit) {
 				mixture_benefits.push(a_benefit);
+				passive_benefits = passive_benefits.filter(function foo(x) { return (x != a_benefit) });
+				}
+			if (!passive_benefits.includes(a_benefit)) {
+				passive_benefits.push(a_benefit);
+				}
+			if (!passive_benefits.includes(b_benefit)) {
+				passive_benefits.push(b_benefit);
 				}
 			}
 		}
-	return [[reagent_a, reagent_b], mixture_benefits];
+	return [mixture_benefits, passive_benefits];
+	}
+
+function mixture_has_all_benefits(mixture_benefits, requested_benefits) {
+	for (b_idx in requested_benefits) {
+		benefit_name = requested_benefits[b_idx];
+		if (!mixture_benefits.includes(benefit_name)) {
+			return false;
+			}
+		}
+	return true;
 	}
 
 function two_reagent_concoctions(requested_benefits) {
 	// Short-list concoctions with any of the required benefits
-	short_list = [];
+	var concoctions = [];
 	for (var b_idx in requested_benefits) {
-		benefit_position = benefits.indexOf(requested_benefits[b_idx]);
-		benefit_reagents = benefits_reagents[benefit_position];
-		required_reagents = benefit_reagents[1];
-		// add a mix of each reagent with each remaining reagent
+		var benefit_name = requested_benefits[b_idx];
+		var benefit_position = benefits.indexOf(benefit_name);
+		var benefit_reagents = benefits_reagents[benefit_position];
+		var required_reagents = benefit_reagents[1];
+		// combine each reagent with each remaining reagent
 		for (ra = 0; ra < required_reagents.length - 1; ra++) {
 			reagent_a = required_reagents[ra];
 			for (rb = ra+1; rb < required_reagents.length; rb++) {
 				reagent_b = required_reagents[rb];
 				concoction_benefits = two_reagent_benefits(reagent_a, reagent_b);
-				short_list.push(concoction_benefits);
+				if (mixture_has_all_benefits(concoction_benefits[0], requested_benefits)) {
+					concoction = [[reagent_a, reagent_b], concoction_benefits[0], concoction_benefits[1]];
+					concoctions.push(concoction);
+					}
 				}
-			}
-		}
-
-	// Cull the short list of concoctions that don't provide all benefits
-	concoctions = [];
-	for (sl in short_list) {
-		concoction = short_list[sl];
-		concoction_benefits = concoction[1];
-		pass = true;
-		for (b_idx in requested_benefits) {
-			benefit_name = requested_benefits[b_idx];
-			if (!concoction_benefits.includes(benefit_name)) {
-				pass = false;
-				}
-			}
-		if (pass) {
-			concoctions.push(concoction);
 			}
 		}
 	return concoctions;
@@ -368,8 +373,9 @@ function display_concoctions(concoctions) {
 	concoctions_div.innerHTML = '';
 	concoctions_div.innerHTML += "<h1>Concoctions</h1>\n";
 	for (i in concoctions) {
-		concoction_reagents = concoctions[i][0];
-		concoction_benefits = concoctions[i][1];
+		concoction_reagents = concoctions[i][0].sort();
+		concoction_benefits = concoctions[i][1].sort();
+		concoction_passives = concoctions[i][2].sort();
 		concoctions_div.innerHTML += "<h2>Option " + i + "</h2>\n";
 		concoctions_div.innerHTML += "<ul>\n";
 		for (j in concoction_reagents) {
@@ -379,6 +385,11 @@ function display_concoctions(concoctions) {
 		concoctions_div.innerHTML += "<p>which produces:</p>\n";
 		for (j in concoction_benefits) {
 			concoctions_div.innerHTML += "<li>" + concoction_benefits[j] + "</li>\n";
+			}
+		concoctions_div.innerHTML += "</ul>\n";
+		concoctions_div.innerHTML += "<p>and also provides:</p>\n";
+		for (j in concoction_passives) {
+			concoctions_div.innerHTML += "<li>" + concoction_passives[j] + "</li>\n";
 			}
 		concoctions_div.innerHTML += "</ul>\n";
 		}
