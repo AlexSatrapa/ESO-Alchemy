@@ -65,6 +65,39 @@ var benefits = [
 	"Weapon Critical",
 	];
 
+var counters = [
+	"Invisible", //"Detection",
+	"Lingering Health", //"Gradual Ravage Health",
+	"Reduce Physical Resist (fracture)", //"Increase Armor",
+	"Reduce Damage Taken (protection)", //"Increase Damage Taken (vulnerability)",
+	"Reduce Healing Taken (defile)", //"Increase Healing Taken (vitality)",
+	"Ravage Ultimate (cowardice)", //"Increase Spell Power",
+	"Lower Spell Resist (breach)", //"Increase Spell Resist",
+	"Reduce Damage Dealt (maim)", //"Increase Weapon Power",
+	"Detection", //"Invisible",
+	"Gradual Ravage Health", //"Lingering Health",
+	"Weapon Critical", //"Lower Critical Damage (enervation)",
+	"Spell Critical", //"Lower Critical Rating (uncertainty)",
+	"Increase Spell Resist", //"Lower Spell Resist (breach)",
+	"Restore Health", //"Ravage Health",
+	"Restore Magicka", //"Ravage Magicka",
+	"Restore Stamina", //"Ravage Stamina",
+	"Increase Spell Power", //"Ravage Ultimate (cowardice)",
+	"Increase Weapon Power", //"Reduce Damage Dealt (maim)",
+	"Increase Damage Taken (vulnerability)", //"Reduce Damage Taken (protection)",
+	"Increase Healing Taken (vitality)", //"Reduce Healing Taken (defile)",
+	"Increase Armor", //"Reduce Physical Resist (fracture)",
+	"Speed", //"Reduce Speed (hindrance)",
+	"Ravage Health", //"Restore Health",
+	"Ravage Magicka", //"Restore Magicka",
+	"Ravage Stamina", //"Restore Stamina",
+	"Reduce Speed (hindrance)", //"Speed",
+	"Lower Critical Rating (uncertainty)", //"Spell Critical",
+	"Unstoppable", //"Stun (entrapment)",
+	"Stun (entrapment)", //"Unstoppable",
+	"Lower Critical Damage (enervation)", //"Weapon Critical",
+	];
+
 var reagents_benefits = 	[
 	["Beetle Scuttle", [
 		"Lower Spell Resist (breach)",
@@ -263,6 +296,73 @@ function populate_benefits_list() {
 		};
 	return true;
 	}
+
+function benefits_for_reagent(reagent_name) {
+	i = reagents.indexOf(reagent_name);
+	reagent_benefits = reagents_benefits[i];
+	benefits_list = reagent_benefits[1];
+	return benefits_list;
+	}
+
+function reagents_for_benefit(benefit_name) {
+	i = benefits.indexOf(benefit_name);
+	benefit_reagents = benefits_reagents[i];
+	reagents_list = benefit_reagents[1];
+	return reagents_list;
+	}
+
+function two_reagent_benefits(reagent_a, reagent_b) {
+	mixture_benefits = [];
+	reagent_a_benefits = benefits_for_reagent(reagent_a);
+	reagent_b_benefits = benefits_for_reagent(reagent_b);
+	for (a in reagent_a_benefits) {
+		for (b in reagent_b_benefits) {
+			a_benefit = reagent_a_benefits[a];
+			b_benefit = reagent_b_benefits[b];
+			if (a_benefit == b_benefit) {
+				mixture_benefits.push(a_benefit);
+				}
+			}
+		}
+	return [[reagent_a, reagent_b], mixture_benefits];
+	}
+
+function two_reagent_concoctions(requested_benefits) {
+	// Short-list concoctions with any of the required benefits
+	short_list = [];
+	for (var b_idx in requested_benefits) {
+		benefit_position = benefits.indexOf(requested_benefits[b_idx]);
+		benefit_reagents = benefits_reagents[benefit_position];
+		required_reagents = benefit_reagents[1];
+		// add a mix of each reagent with each remaining reagent
+		for (ra = 0; ra < required_reagents.length - 1; ra++) {
+			reagent_a = required_reagents[ra];
+			for (rb = ra+1; rb < required_reagents.length; rb++) {
+				reagent_b = required_reagents[rb];
+				concoction_benefits = two_reagent_benefits(reagent_a, reagent_b);
+				short_list.push(concoction_benefits);
+				}
+			}
+		}
+
+	// Cull the short list of concoctions that don't provide all benefits
+	concoctions = [];
+	for (sl in short_list) {
+		concoction = short_list[sl];
+		concoction_benefits = concoction[1];
+		pass = true;
+		for (b_idx in requested_benefits) {
+			benefit_name = requested_benefits[b_idx];
+			if (!concoction_benefits.includes(benefit_name)) {
+				pass = false;
+				}
+			}
+		if (pass) {
+			concoctions.push(concoction);
+			}
+		}
+	return concoctions;
+	}
 </script>
 </head>
 <body>
@@ -276,5 +376,6 @@ function populate_benefits_list() {
 </body>
 <script type="text/JavaScript">
 populate_benefits_list();
+produce_benefits_reagents_list();
 </script>
 </html>
