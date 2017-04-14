@@ -383,6 +383,12 @@ function display_concoctions(concoctions) {
 		concoctions_div.innerHTML += "</ul>\n";
 		}
 	}
+
+function calculate_concoctions() {
+	required_benefits = collate_benefits();
+	calculated_concoctions = two_reagent_concoctions(required_benefits);
+	display_concoctions(calculated_concoctions);
+	}
 </script>
 </head>
 <body>
@@ -391,6 +397,7 @@ function display_concoctions(concoctions) {
 <h1>Requested Benefits</h1>
 </div>
 <button name="Clear" value="Clear" onClick="JavaScript:populate_benefits_list()">Clear</button>
+<button name="Calculate" value="Calculate" onClick="JavaScript:calculate_concoctions()">Calculate</button>
 <div id="concoctions">
 <h1>Concoctions</h1>
 </div>

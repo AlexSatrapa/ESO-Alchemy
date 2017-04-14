@@ -4,6 +4,8 @@ The ultimate aim of this tool is to allow a user to tick off a list of potencies
 
 The hard part is of course going to be the actual calculation itself.
 
+Uses the [Vanilla JS](http://vanilla-js.com) framework.
+
 # Work Notes
 
 ## 2017-03-20 22:30
