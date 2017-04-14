@@ -15,11 +15,11 @@ var reagents = [
 	"Emetic Russula",
 	"Fleshfly Larva",
 	"Imp Stool",
-	"Lady’s Smock",
+	"Lady&apos;s Smock",
 	"Luminous Russula",
 	"Mountain Flower",
 	"Mudcrab Chitin",
-	"Namira’s Rot",
+	"Namira&apos;s Rot",
 	"Nightshade",
 	"Nirnroot",
 	"Scrib Jelly",
@@ -165,7 +165,7 @@ var reagents_benefits = 	[
 		"Ravage Stamina",
 		"Lower Critical Damage (enervation)",
 		]],
-	["Lady’s Smock", [
+	["Lady&apos;s Smock", [
 		"Increase Spell Power",
 		"Lower Spell Resist (breach)",
 		"Restore Magicka",
@@ -189,7 +189,7 @@ var reagents_benefits = 	[
 		"Increase Armor",
 		"Reduce Healing Taken (defile)",
 		]],
-	["Namira’s Rot", [
+	["Namira&apos;s Rot", [
 		"Spell Critical",
 		"Invisible",
 		"Speed",
@@ -289,12 +289,11 @@ function collate_benefits() {
 
 function populate_benefits_list() {
 	benefits_listing = document.getElementById("benefits");
-	benefits_listing.innerHTML = '';
+	benefits_listing.innerHTML = "<h1>Requested Benefits</h1>\n";
 	for (i in benefits) {
 		benefit_item = '<input type="checkbox" name="benefit" value="' + benefits[i] + '">' + benefits[i] + "</input><br/>\n";
 		benefits_listing.innerHTML += benefit_item;
 		};
-	return true;
 	}
 
 function benefits_for_reagent(reagent_name) {
@@ -363,14 +362,37 @@ function two_reagent_concoctions(requested_benefits) {
 		}
 	return concoctions;
 	}
+
+function display_concoctions(concoctions) {
+	concoctions_div = document.getElementById("concoctions");
+	concoctions_div.innerHTML = '';
+	concoctions_div.innerHTML += "<h1>Concoctions</h1>\n";
+	for (i in concoctions) {
+		concoction_reagents = concoctions[i][0];
+		concoction_benefits = concoctions[i][1];
+		concoctions_div.innerHTML += "<h2>Option " + i + "</h2>\n";
+		concoctions_div.innerHTML += "<ul>\n";
+		for (j in concoction_reagents) {
+			concoctions_div.innerHTML += "<li>" + concoction_reagents[j] + "</li>\n";
+			}
+		concoctions_div.innerHTML += "</ul>\n";
+		concoctions_div.innerHTML += "<p>which produces:</p>\n";
+		for (j in concoction_benefits) {
+			concoctions_div.innerHTML += "<li>" + concoction_benefits[j] + "</li>\n";
+			}
+		concoctions_div.innerHTML += "</ul>\n";
+		}
+	}
 </script>
 </head>
 <body>
 <div id="calculator-body">
 <div id="benefits">
+<h1>Requested Benefits</h1>
 </div>
 <button name="Clear" value="Clear" onClick="JavaScript:populate_benefits_list()">Clear</button>
-<div id="reagents">
+<div id="concoctions">
+<h1>Concoctions</h1>
 </div>
 </div>
 </body>
