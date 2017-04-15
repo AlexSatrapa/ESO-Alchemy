@@ -341,7 +341,7 @@ function two_reagent_benefits(reagent_a, reagent_b) {
 
 function add_reagent_to_mixture(reagent, mixture_benefits, passive_benefits, cancelled_benefits) {
 	var reagent_benefits = benefits_for_reagent(reagent);
-	for (i in reagent_benefits) {
+	for (var i in reagent_benefits) {
 		var benefit = reagent_benefits[i];
 		var benefit_idx = benefits.indexOf(benefit);
 		var counter = counters[benefit_idx];
@@ -365,94 +365,28 @@ function add_reagent_to_mixture(reagent, mixture_benefits, passive_benefits, can
 			passive_benefits = passive_benefits.filter(function foo(x) { return (x != benefit) });
 			}
 		}
+	return [mixture_benefits, passive_benefits, cancelled_benefits];
 	}
 
-function three_reagent_benefits(reagent_a, reagent_b, reagent_c) {
+function calculate_reagent_benefits(reagents) {
 	var mixture_benefits = [];
 	var passive_benefits = [];
 	var cancelled_benefits = [];
-	var reagent_a_benefits = benefits_for_reagent(reagent_a);
-	var reagent_b_benefits = benefits_for_reagent(reagent_b);
-	var reagent_c_benefits = benefits_for_reagent(reagent_c);
+
+	for (var i in reagents) {
+		var reagent = reagents[i];
+		results = add_reagent_to_mixture(reagent, mixture_benefits, passive_benefits, cancelled_benefits);
+		mixture_benefits = results[0];
+		passive_benefits = results[1];
+		cancelled_benefits = results[2];
+		}
 	
-	for (i in reagent_a_benefits) {
-		var benefit = reagent_a_benefits[i];
-		var benefit_idx = benefits.indexOf(benefit);
-		var counter = counters[benefit_idx];
-		if (mixture_benefits.includes(benefit) || cancelled_benefits.includes(benefit)) {
-			continue;
-			}
-		if (mixture_benefits.includes(counter) || passive_benefits.includes(counter)) {
-			// Remove the benefit from mixture or passive list, add it to cancelled_benefits
-			passive_benefits = passive_benefits.filter(function foo(x) { return (x != benefit) });
-			passive_benefits = passive_benefits.filter(function foo(x) { return (x != counter) });
-			mixture_benefits = mixture_benefits.filter(function foo(x) { return (x != benefit) });
-			mixture_benefits = mixture_benefits.filter(function foo(x) { return (x != counter) });
-			cancelled_benefits.push(benefit);
-			cancelled_benefits.push(counter);
-			}
-		else if (!passive_benefits.includes(benefit)) {
-			passive_benefits.push(benefit);
-			}
-		else {
-			mixture_benefits.push(benefit);
-			passive_benefits = passive_benefits.filter(function foo(x) { return (x != benefit) });
-			}
-		}
-	for (i in reagent_b_benefits) {
-		var benefit = reagent_b_benefits[i];
-		var benefit_idx = benefits.indexOf(benefit);
-		var counter = counters[benefit_idx];
-		if (mixture_benefits.includes(benefit) || cancelled_benefits.includes(benefit)) {
-			continue;
-			}
-		if (mixture_benefits.includes(counter) || passive_benefits.includes(counter)) {
-			// Remove the benefit from mixture or passive list, add it to cancelled_benefits
-			passive_benefits = passive_benefits.filter(function foo(x) { return (x != benefit) });
-			passive_benefits = passive_benefits.filter(function foo(x) { return (x != counter) });
-			mixture_benefits = mixture_benefits.filter(function foo(x) { return (x != benefit) });
-			mixture_benefits = mixture_benefits.filter(function foo(x) { return (x != counter) });
-			cancelled_benefits.push(benefit);
-			cancelled_benefits.push(counter);
-			}
-		else if (!passive_benefits.includes(benefit)) {
-			passive_benefits.push(benefit);
-			}
-		else {
-			mixture_benefits.push(benefit);
-			passive_benefits = passive_benefits.filter(function foo(x) { return (x != benefit) });
-			}
-		}
-	for (i in reagent_c_benefits) {
-		var benefit = reagent_c_benefits[i];
-		var benefit_idx = benefits.indexOf(benefit);
-		var counter = counters[benefit_idx];
-		if (mixture_benefits.includes(benefit) || cancelled_benefits.includes(benefit)) {
-			continue;
-			}
-		if (mixture_benefits.includes(counter) || passive_benefits.includes(counter)) {
-			// Remove the benefit from mixture or passive list, add it to cancelled_benefits
-			passive_benefits = passive_benefits.filter(function foo(x) { return (x != benefit) });
-			passive_benefits = passive_benefits.filter(function foo(x) { return (x != counter) });
-			mixture_benefits = mixture_benefits.filter(function foo(x) { return (x != benefit) });
-			mixture_benefits = mixture_benefits.filter(function foo(x) { return (x != counter) });
-			cancelled_benefits.push(benefit);
-			cancelled_benefits.push(counter);
-			}
-		else if (!passive_benefits.includes(benefit)) {
-			passive_benefits.push(benefit);
-			}
-		else {
-			mixture_benefits.push(benefit);
-			passive_benefits = passive_benefits.filter(function foo(x) { return (x != benefit) });
-			}
-		}
 	return [mixture_benefits, passive_benefits]
 	}
 
 function mixture_has_all_benefits(mixture_benefits, requested_benefits) {
-	for (b_idx in requested_benefits) {
-		benefit_name = requested_benefits[b_idx];
+	for (var b_idx in requested_benefits) {
+		var benefit_name = requested_benefits[b_idx];
 		if (!mixture_benefits.includes(benefit_name)) {
 			return false;
 			}
@@ -460,32 +394,33 @@ function mixture_has_all_benefits(mixture_benefits, requested_benefits) {
 	return true;
 	}
 
-function two_reagent_concoctions(requested_benefits) {
+function compound_concoctions(requested_benefits) {
 	// Short-list concoctions with any of the required benefits
 	var concoctions = [];
-	for (var b_idx in requested_benefits) {
-		var benefit_name = requested_benefits[b_idx];
-		var benefit_idx = benefits.indexOf(benefit_name);
-		var benefit_reagents = benefits_reagents[benefit_idx];
-		var required_reagents = benefit_reagents[1];
-		// combine each reagent with each remaining reagent
-		for (ra = 0; ra < required_reagents.length - 1; ra++) {
-			reagent_a = required_reagents[ra];
-			for (rb = ra+1; rb < required_reagents.length; rb++) {
-				reagent_b = required_reagents[rb];
-				concoction_benefits = two_reagent_benefits(reagent_a, reagent_b);
-				if (mixture_has_all_benefits(concoction_benefits[0], requested_benefits)) {
-					concoction = [[reagent_a, reagent_b], concoction_benefits[0], concoction_benefits[1]];
-					concoctions.push(concoction);
+
+	// combine each reagent with each remaining reagent
+	for (var ra = 0; ra < reagents.length - 1; ra++) {
+		var reagent_a = reagents[ra];
+		for (var rb = ra+1; rb < reagents.length; rb++) {
+			var reagent_b = reagents[rb];
+			var concoction_benefits = calculate_reagent_benefits([reagent_a, reagent_b]);
+			if (mixture_has_all_benefits(concoction_benefits[0], requested_benefits)) {
+				var concoction = [[reagent_a, reagent_b], concoction_benefits[0], concoction_benefits[1]];
+				concoctions.push(concoction);
+				}
+			else {
+				for (var rc = rb+1; rc < reagents.length; rc++) {
+					var reagent_c = reagents[rc];
+					var concoction_benefits = calculate_reagent_benefits([reagent_a, reagent_b, reagent_c]);
+					if (mixture_has_all_benefits(concoction_benefits[0], requested_benefits)) {
+						var concoction = [[reagent_a, reagent_b, reagent_c], concoction_benefits[0], concoction_benefits[1]];
+						concoctions.push(concoction);
+						}
 					}
 				}
 			}
 		}
 	return concoctions;
-	}
-
-function three_reagent_concoctions(requested_benefits) {
-	
 	}
 
 function display_concoctions(concoctions) {
@@ -517,7 +452,7 @@ function display_concoctions(concoctions) {
 
 function calculate_concoctions() {
 	required_benefits = collate_benefits();
-	calculated_concoctions = two_reagent_concoctions(required_benefits);
+	calculated_concoctions = compound_concoctions(required_benefits);
 	display_concoctions(calculated_concoctions);
 	}
 </script>
