@@ -2,6 +2,31 @@
 <html>
 <head>
 <title>Maralie's Alchemy Calculator</title>
+<style>
+* {
+	font-family: "Chalkboard", "Comic Sans", sans-serif;
+	}
+div {
+	padding-left: 1em;
+	padding-right: 1em;
+	}
+div#calculator-body {
+	margin: auto;
+	width: 600px;
+	}
+div#benefitwrap {
+	align: center;
+	float: left;
+	width: auto;
+	flow: block;
+	}
+div#concoctions {
+	float: right;
+	flow: block;
+	overflow: auto;
+	height: 99vh;
+	}
+</style>
 <script type="text/JavaScript">
 var reagents = [
 	"Beetle Scuttle",
@@ -261,6 +286,8 @@ var benefits_reagents = [];
 
 function produce_benefits_reagents_list() {
 	benefits_reagents = [];
+	error_notifications = document.getElementById("errors");
+	error_notifications.innerHTML = "<ul>\n";
 	for (var b_idx in benefits) {
 		var benefit_name = benefits[b_idx]
 		benefits_reagents.push([benefit_name,[]]);
@@ -272,9 +299,14 @@ function produce_benefits_reagents_list() {
 		for (var idx in benefit_set) {
 			var benefit_name = benefit_set[idx];
 			var index = benefits.indexOf(benefit_name);
+			if (index < 0) {
+				error_notifications.innerHTML += "<li>Unknown benefit " + benefit_name + " for " + reagent_name + "</li>\n";
+				continue;
+				}
 			benefits_reagents[index][1].push(reagent_name);
 			}
 		}
+	error_notifications.innerHTML += "</ul>\n";
 	return benefits_reagents;
 	}
 
@@ -291,7 +323,7 @@ function populate_benefits_list() {
 	var benefits_listing = document.getElementById("benefits");
 	benefits_listing.innerHTML = "<h1>Requested Benefits</h1>\n";
 	for (var i in benefits) {
-		var benefit_item = '<input type="checkbox" name="benefit" value="' + benefits[i] + '">' + benefits[i] + "</input><br/>\n";
+		var benefit_item = '<label><input type="checkbox" name="benefit" value="' + benefits[i] + '" onChange="JavaScript:calculate_concoctions()">' + benefits[i] + "</label><br/>\n";
 		benefits_listing.innerHTML += benefit_item;
 		};
 	}
@@ -377,19 +409,17 @@ function compound_concoctions(requested_benefits) {
 		var reagent_a = reagents[ra];
 		for (var rb = ra+1; rb < reagents.length; rb++) {
 			var reagent_b = reagents[rb];
-			var concoction_benefits = calculate_reagent_benefits([reagent_a, reagent_b]);
-			if (mixture_has_all_benefits(concoction_benefits[0], requested_benefits)) {
-				var concoction = [[reagent_a, reagent_b], concoction_benefits[0], concoction_benefits[1]];
+			var two_concoction_benefits = calculate_reagent_benefits([reagent_a, reagent_b]);
+			if (mixture_has_all_benefits(two_concoction_benefits[0], requested_benefits)) {
+				var concoction = [[reagent_a, reagent_b], two_concoction_benefits[0], two_concoction_benefits[1]];
 				concoctions.push(concoction);
 				}
-			else {
-				for (var rc = rb+1; rc < reagents.length; rc++) {
-					var reagent_c = reagents[rc];
-					var concoction_benefits = calculate_reagent_benefits([reagent_a, reagent_b, reagent_c]);
-					if (mixture_has_all_benefits(concoction_benefits[0], requested_benefits)) {
-						var concoction = [[reagent_a, reagent_b, reagent_c], concoction_benefits[0], concoction_benefits[1]];
-						concoctions.push(concoction);
-						}
+			for (var rc = rb+1; rc < reagents.length; rc++) {
+				var reagent_c = reagents[rc];
+				var three_concoction_benefits = calculate_reagent_benefits([reagent_a, reagent_b, reagent_c]);
+				if (mixture_has_all_benefits(three_concoction_benefits[0], requested_benefits) && (two_concoction_benefits != three_concoction_benefits)) {
+					var concoction = [[reagent_a, reagent_b, reagent_c], three_concoction_benefits[0], three_concoction_benefits[1]];
+					concoctions.push(concoction);
 					}
 				}
 			}
@@ -405,7 +435,7 @@ function display_concoctions(concoctions) {
 		concoction_reagents = concoctions[i][0].sort();
 		concoction_benefits = concoctions[i][1].sort();
 		concoction_passives = concoctions[i][2].sort();
-		concoctions_div.innerHTML += "<h2>Option " + i + "</h2>\n";
+		concoctions_div.innerHTML += "<h2>Concoction " + i + "</h2>\n";
 		concoctions_div.innerHTML += "<ul>\n";
 		for (var j in concoction_reagents) {
 			concoctions_div.innerHTML += "<li>" + concoction_reagents[j] + "</li>\n";
@@ -416,16 +446,19 @@ function display_concoctions(concoctions) {
 			concoctions_div.innerHTML += "<li>" + concoction_benefits[j] + "</li>\n";
 			}
 		concoctions_div.innerHTML += "</ul>\n";
-		concoctions_div.innerHTML += "<p>and also provides:</p>\n";
-		for (var j in concoction_passives) {
-			concoctions_div.innerHTML += "<li>" + concoction_passives[j] + "</li>\n";
-			}
-		concoctions_div.innerHTML += "</ul>\n";
 		}
 	}
 
 function calculate_concoctions() {
 	required_benefits = collate_benefits();
+	error_notifications = document.getElementById("errors");
+	if (required_benefits.length == 0) {
+		error_notifications.innerHTML = "<p>Please select at least one benefit!</p>\n";
+		return;
+		}
+	else {
+		error_notifications.innerHTML = "";
+		}
 	calculated_concoctions = compound_concoctions(required_benefits);
 	display_concoctions(calculated_concoctions);
 	}
@@ -433,11 +466,15 @@ function calculate_concoctions() {
 </head>
 <body>
 <div id="calculator-body">
+<div id="benefitwrap">
 <div id="benefits">
 <h1>Requested Benefits</h1>
 </div>
 <button name="Clear" value="Clear" onClick="JavaScript:populate_benefits_list()">Clear</button>
 <button name="Calculate" value="Calculate" onClick="JavaScript:calculate_concoctions()">Calculate</button>
+<div id="errors">
+</div>
+</div>
 <div id="concoctions">
 <h1>Concoctions</h1>
 </div>
