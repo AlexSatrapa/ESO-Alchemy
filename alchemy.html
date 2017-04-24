@@ -313,32 +313,6 @@ function reagents_for_benefit(benefit_name) {
 	return reagents_list;
 	}
 
-function two_reagent_benefits(reagent_a, reagent_b) {
-	var mixture_benefits = []; // benefits that have two or more reagents
-	var passive_benefits = []; // benefits that are present on one reagent
-	var reagent_a_benefits = benefits_for_reagent(reagent_a);
-	var reagent_b_benefits = benefits_for_reagent(reagent_b);
-	for (var a in reagent_a_benefits) {
-		for (var b in reagent_b_benefits) {
-			var a_benefit = reagent_a_benefits[a];
-			var b_benefit = reagent_b_benefits[b];
-			if (a_benefit == b_benefit) {
-				mixture_benefits.push(a_benefit);
-				passive_benefits = passive_benefits.filter(function foo(x) { return (x != a_benefit) });
-				}
-			else {
-				if (!passive_benefits.includes(a_benefit) && !mixture_benefits.includes(a_benefit)) {
-					passive_benefits.push(a_benefit);
-					}
-				if (!passive_benefits.includes(b_benefit) && !mixture_benefits.includes(b_benefit)) {
-					passive_benefits.push(b_benefit);
-					}
-				}
-			}
-		}
-	return [mixture_benefits, passive_benefits];
-	}
-
 function add_reagent_to_mixture(reagent, mixture_benefits, passive_benefits, cancelled_benefits) {
 	var reagent_benefits = benefits_for_reagent(reagent);
 	for (var i in reagent_benefits) {
