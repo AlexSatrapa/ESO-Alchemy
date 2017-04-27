@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Maralie's Alchemy Calculator</title>
+<style>
+* {
+	font-family: "Chalkboard", "Comic Sans", sans-serif;
+	}
+div {
+	padding-left: 1em;
+	padding-right: 1em;
+	}
+div#calculator-body {
+	margin: auto;
+	width: 690px;
+	}
+div#benefitwrap {
+	align: center;
+	float: left;
+	width: auto;
+	flow: block;
+	}
+div#concoctions {
+	float: right;
+	flow: block;
+	}
+</style>
+<script type="text/JavaScript">
+var reagents = [
+	"Beetle Scuttle",
+	"Blessed Thistle",
+	"Blue Entoloma",
+	"Bugloss",
+	"Butterfly Wing",
+	"Columbine",
+	"Cornflower",
+	"Dragonthorn",
+	"Emetic Russula",
+	"Fleshfly Larva",
+	"Imp Stool",
+	"Lady&apos;s Smock",
+	"Luminous Russula",
+	"Mountain Flower",
+	"Mudcrab Chitin",
+	"Namira&apos;s Rot",
+	"Nightshade",
+	"Nirnroot",
+	"Scrib Jelly",
+	"Spider Egg",
+	"Stinkhorn",
+	"Torchbug Thorax",
+	"Violet Coprinus",
+	"Water Hyacinth",
+	"Whitecap",
+	"Wormwood",
+	];
+
+var benefits = [
+	"Detection",
+	"Gradual Ravage Health",
+	"Increase Armor",
+	"Increase Damage Taken (vulnerability)",
+	"Increase Healing Taken (vitality)",
+	"Increase Spell Power",
+	"Increase Spell Resist",
+	"Increase Weapon Power",
+	"Invisible",
+	"Lingering Health",
+	"Lower Critical Damage (enervation)",
+	"Lower Critical Rating (uncertainty)",
+	"Lower Spell Resist (breach)",
+	"Ravage Health",
+	"Ravage Magicka",
+	"Ravage Stamina",
+	"Ravage Ultimate (cowardice)",
+	"Reduce Damage Dealt (maim)",
+	"Reduce Damage Taken (protection)",
+	"Reduce Healing Taken (defile)",
+	"Reduce Physical Resist (fracture)",
+	"Reduce Speed (hindrance)",
+	"Restore Health",
+	"Restore Magicka",
+	"Restore Stamina",
+	"Speed",
+	"Spell Critical",
+	"Stun (entrapment)",
+	"Unstoppable",
+	"Weapon Critical",
+	];
+
+var counters = [
+	"Invisible", //"Detection",
+	"Lingering Health", //"Gradual Ravage Health",
+	"Reduce Physical Resist (fracture)", //"Increase Armor",
+	"Reduce Damage Taken (protection)", //"Increase Damage Taken (vulnerability)",
+	"Reduce Healing Taken (defile)", //"Increase Healing Taken (vitality)",
+	"Ravage Ultimate (cowardice)", //"Increase Spell Power",
+	"Lower Spell Resist (breach)", //"Increase Spell Resist",
+	"Reduce Damage Dealt (maim)", //"Increase Weapon Power",
+	"Detection", //"Invisible",
+	"Gradual Ravage Health", //"Lingering Health",
+	"Weapon Critical", //"Lower Critical Damage (enervation)",
+	"Spell Critical", //"Lower Critical Rating (uncertainty)",
+	"Increase Spell Resist", //"Lower Spell Resist (breach)",
+	"Restore Health", //"Ravage Health",
+	"Restore Magicka", //"Ravage Magicka",
+	"Restore Stamina", //"Ravage Stamina",
+	"Increase Spell Power", //"Ravage Ultimate (cowardice)",
+	"Increase Weapon Power", //"Reduce Damage Dealt (maim)",
+	"Increase Damage Taken (vulnerability)", //"Reduce Damage Taken (protection)",
+	"Increase Healing Taken (vitality)", //"Reduce Healing Taken (defile)",
+	"Increase Armor", //"Reduce Physical Resist (fracture)",
+	"Speed", //"Reduce Speed (hindrance)",
+	"Ravage Health", //"Restore Health",
+	"Ravage Magicka", //"Restore Magicka",
+	"Ravage Stamina", //"Restore Stamina",
+	"Reduce Speed (hindrance)", //"Speed",
+	"Lower Critical Rating (uncertainty)", //"Spell Critical",
+	"Unstoppable", //"Stun (entrapment)",
+	"Stun (entrapment)", //"Unstoppable",
+	"Lower Critical Damage (enervation)", //"Weapon Critical",
+	];
+
+var reagents_benefits = 	[
+	["Beetle Scuttle", [
+		"Lower Spell Resist (breach)",
+		"Reduce Damage Taken (protection)",
+		"Increase Armor",
+		"Increase Healing Taken (vitality)",
+		]],
+	["Blessed Thistle", [
+		"Restore Stamina",
+		"Ravage Health",
+		"Increase Weapon Power",
+		"Speed",
+		]],
+	["Blue Entoloma", [
+		"Ravage Magicka",
+		"Restore Health",
+		"Ravage Ultimate (cowardice)",
+		"Invisible",
+		]],
+	["Bugloss", [
+		"Increase Spell Resist",
+		"Ravage Ultimate (cowardice)",
+		"Restore Health",
+		"Restore Magicka",
+		]],
+	["Butterfly Wing", [
+		"Restore Health",
+		"Lingering Health",
+		"Lower Critical Rating (uncertainty)",
+		"Increase Healing Taken (vitality)",
+		]],
+	["Columbine", [
+		"Restore Health",
+		"Restore Stamina",
+		"Restore Magicka",
+		"Unstoppable",
+		]],
+	["Cornflower", [
+		"Restore Magicka",
+		"Ravage Health",
+		"Increase Spell Power",
+		"Detection",
+		]],
+	["Dragonthorn", [
+		"Increase Weapon Power",
+		"Reduce Physical Resist (fracture)",
+		"Restore Stamina",
+		"Weapon Critical",
+		]],
+	["Emetic Russula", [
+		"Ravage Health",
+		"Ravage Stamina",
+		"Ravage Magicka",
+		"Stun (entrapment)",
+		]],
+	["Fleshfly Larva", [
+		"Ravage Stamina",
+		"Gradual Ravage Health",
+		"Increase Damage Taken (vulnerability)",
+		"Increase Healing Taken (vitality)",
+		]],
+	["Imp Stool", [
+		"Reduce Damage Dealt (maim)",
+		"Increase Armor",
+		"Ravage Stamina",
+		"Lower Critical Damage (enervation)",
+		]],
+	["Lady&apos;s Smock", [
+		"Increase Spell Power",
+		"Lower Spell Resist (breach)",
+		"Restore Magicka",
+		"Spell Critical",
+		]],
+	["Luminous Russula", [
+		"Ravage Stamina",
+		"Restore Health",
+		"Reduce Damage Dealt (maim)",
+		"Reduce Speed (hindrance)",
+		]],
+	["Mountain Flower", [
+		"Increase Armor",
+		"Reduce Damage Dealt (maim)",
+		"Restore Health",
+		"Restore Stamina",
+		]],
+	["Mudcrab Chitin", [
+		"Increase Spell Resist",
+		"Reduce Damage Taken (protection)",
+		"Increase Armor",
+		"Reduce Healing Taken (defile)",
+		]],
+	["Namira&apos;s Rot", [
+		"Spell Critical",
+		"Invisible",
+		"Speed",
+		"Unstoppable",
+		]],
+	["Nightshade", [
+		"Ravage Health",
+		"Gradual Ravage Health",
+		"Reduce Damage Taken (protection)",
+		"Reduce Healing Taken (defile)",
+		]],
+	["Nirnroot", [
+		"Ravage Health",
+		"Lower Critical Damage (enervation)",
+		"Lower Critical Rating (uncertainty)",
+		"Invisible",
+		]],
+	["Scrib Jelly", [
+		"Ravage Magicka",
+		"Increase Damage Taken (vulnerability)",
+		"Speed",
+		"Lingering Health",
+		]],
+	["Spider Egg", [
+		"Reduce Speed (hindrance)",
+		"Lingering Health",
+		"Invisible",
+		"Reduce Healing Taken (defile)",
+		]],
+	["Stinkhorn", [
+		"Reduce Physical Resist (fracture)",
+		"Increase Weapon Power",
+		"Ravage Health",
+		"Ravage Stamina",
+		]],
+	["Torchbug Thorax", [
+		"Reduce Physical Resist (fracture)",
+		"Detection",
+		"Lower Critical Damage (enervation)",
+		"Increase Healing Taken (vitality)",
+		]],
+	["Violet Coprinus", [
+		"Lower Spell Resist (breach)",
+		"Increase Spell Power",
+		"Ravage Health",
+		"Ravage Magicka",
+		]],
+	["Water Hyacinth", [
+		"Restore Health",
+		"Weapon Critical",
+		"Spell Critical",
+		"Stun (entrapment)",
+		]],
+	["Whitecap", [
+		"Ravage Ultimate (cowardice)",
+		"Increase Spell Resist",
+		"Ravage Magicka",
+		"Detection",
+		]],
+	["Wormwood", [
+		"Weapon Critical",
+		"Detection",
+		"Reduce Speed (hindrance)",
+		"Unstoppable",
+		]],
+	];
+
+var benefits_reagents = [];
+
+function produce_benefits_reagents_list() {
+	benefits_reagents = [];
+	error_notifications = document.getElementById("errors");
+	error_notifications.innerHTML = "<ul>\n";
+	for (var b_idx in benefits) {
+		var benefit_name = benefits[b_idx]
+		benefits_reagents.push([benefit_name,[]]);
+		}
+	for (var rb_idx in reagents_benefits) {
+		var reagent_benefits = reagents_benefits[rb_idx];
+		var reagent_name = reagent_benefits[0];
+		var benefit_set = reagent_benefits[1];
+		for (var idx in benefit_set) {
+			var benefit_name = benefit_set[idx];
+			var index = benefits.indexOf(benefit_name);
+			if (index < 0) {
+				error_notifications.innerHTML += "<li>Unknown benefit " + benefit_name + " for " + reagent_name + "</li>\n";
+				continue;
+				}
+			benefits_reagents[index][1].push(reagent_name);
+			}
+		}
+	error_notifications.innerHTML += "</ul>\n";
+	return benefits_reagents;
+	}
+
+function collate_benefits() {
+	var checked_benefits = document.querySelectorAll('*[name="benefit"]:checked');
+	var collated = [];
+	for (let benefit of checked_benefits.keys()) {
+		collated.push(checked_benefits.item(benefit).value);
+		}
+	return collated;
+	}
+
+function populate_benefits_list() {
+	var benefits_listing = document.getElementById("benefits");
+	benefits_listing.innerHTML = "<h1>Requested Benefits</h1>\n";
+	for (var i in benefits) {
+		var benefit_item = '<label><input type="checkbox" name="benefit" value="' + benefits[i] + '" onChange="JavaScript:calculate_concoctions()">' + benefits[i] + "</label><br/>\n";
+		benefits_listing.innerHTML += benefit_item;
+		};
+	}
+
+function benefits_for_reagent(reagent_name) {
+	if (typeof reagent_name =='undefined') {
+		return []
+		}
+	var i = reagents.indexOf(reagent_name);
+	var reagent_benefits = reagents_benefits[i];
+	var benefits_list = reagent_benefits[1];
+	return benefits_list;
+	}
+
+function reagents_for_benefit(benefit_name) {
+	var i = benefits.indexOf(benefit_name);
+	var benefit_reagents = benefits_reagents[i];
+	var reagents_list = benefit_reagents[1];
+	return reagents_list;
+	}
+
+function add_reagent_to_mixture(reagent, mixture_benefits, passive_benefits, cancelled_benefits) {
+	var reagent_benefits = benefits_for_reagent(reagent);
+	for (var i in reagent_benefits) {
+		var benefit = reagent_benefits[i];
+		var benefit_idx = benefits.indexOf(benefit);
+		var counter = counters[benefit_idx];
+		if (mixture_benefits.includes(benefit) || cancelled_benefits.includes(benefit)) {
+			continue;
+			}
+		if (mixture_benefits.includes(counter) || passive_benefits.includes(counter)) {
+			// Remove the benefit from mixture or passive list, add it to cancelled_benefits
+			passive_benefits = passive_benefits.filter(function foo(x) { return (x != benefit) });
+			passive_benefits = passive_benefits.filter(function foo(x) { return (x != counter) });
+			mixture_benefits = mixture_benefits.filter(function foo(x) { return (x != benefit) });
+			mixture_benefits = mixture_benefits.filter(function foo(x) { return (x != counter) });
+			cancelled_benefits.push(benefit);
+			cancelled_benefits.push(counter);
+			}
+		else if (!passive_benefits.includes(benefit)) {
+			passive_benefits.push(benefit);
+			}
+		else {
+			mixture_benefits.push(benefit);
+			passive_benefits = passive_benefits.filter(function foo(x) { return (x != benefit) });
+			}
+		}
+	return [mixture_benefits, passive_benefits, cancelled_benefits];
+	}
+
+function calculate_reagent_benefits(reagents) {
+	var mixture_benefits = [];
+	var passive_benefits = [];
+	var cancelled_benefits = [];
+
+	for (var i in reagents) {
+		var reagent = reagents[i];
+		results = add_reagent_to_mixture(reagent, mixture_benefits, passive_benefits, cancelled_benefits);
+		mixture_benefits = results[0];
+		passive_benefits = results[1];
+		cancelled_benefits = results[2];
+		}
+	
+	return [mixture_benefits, passive_benefits]
+	}
+
+function mixture_has_all_benefits(mixture_benefits, requested_benefits) {
+	for (var b_idx in requested_benefits) {
+		var benefit_name = requested_benefits[b_idx];
+		if (!mixture_benefits.includes(benefit_name)) {
+			return false;
+			}
+		}
+	return true;
+	}
+
+function compound_concoctions(requested_benefits) {
+	// Short-list concoctions with any of the required benefits
+	var concoctions = [];
+
+	// combine each reagent with each remaining reagent
+	for (var ra = 0; ra < reagents.length - 1; ra++) {
+		var reagent_a = reagents[ra];
+		for (var rb = ra+1; rb < reagents.length; rb++) {
+			var reagent_b = reagents[rb];
+			var two_concoction_benefits = calculate_reagent_benefits([reagent_a, reagent_b]);
+			if (mixture_has_all_benefits(two_concoction_benefits[0], requested_benefits)) {
+				var concoction = [[reagent_a, reagent_b], two_concoction_benefits[0], two_concoction_benefits[1]];
+				concoctions.push(concoction);
+				}
+			for (var rc = rb+1; rc < reagents.length; rc++) {
+				var reagent_c = reagents[rc];
+				var three_concoction_benefits = calculate_reagent_benefits([reagent_a, reagent_b, reagent_c]);
+				if (mixture_has_all_benefits(three_concoction_benefits[0], requested_benefits) && (two_concoction_benefits[0].sort() != three_concoction_benefits[0].sort())) {
+					var concoction = [[reagent_a, reagent_b, reagent_c], three_concoction_benefits[0], three_concoction_benefits[1]];
+					concoctions.push(concoction);
+					}
+				}
+			}
+		}
+	return concoctions;
+	}
+
+function clear_concoctions() {
+	concoctions_div = document.getElementById("concoctions");
+	concoctions_div.innerHTML = "<h1>Concoctions</h1>\n";
+	return concoctions_div;
+	}
+
+function display_concoctions(concoctions) {
+	concoctions_div = clear_concoctions();
+	for (var i in concoctions) {
+		concoction_reagents = concoctions[i][0].sort();
+		concoction_benefits = concoctions[i][1].sort();
+		concoction_passives = concoctions[i][2].sort();
+		concoctions_div.innerHTML += "<h2>Concoction " + i + "</h2>\n";
+		concoctions_div.innerHTML += "<ul>\n";
+		for (var j in concoction_reagents) {
+			concoctions_div.innerHTML += "<li>" + concoction_reagents[j] + "</li>\n";
+			}
+		concoctions_div.innerHTML += "</ul>\n";
+		concoctions_div.innerHTML += "<p>which produces:</p>\n";
+		for (var j in concoction_benefits) {
+			concoctions_div.innerHTML += "<li>" + concoction_benefits[j] + "</li>\n";
+			}
+		concoctions_div.innerHTML += "</ul>\n";
+		}
+	}
+
+function calculate_concoctions() {
+	required_benefits = collate_benefits();
+	if (required_benefits.length == 0) {
+		clear_concoctions();
+		return;
+		}
+	calculated_concoctions = compound_concoctions(required_benefits);
+	display_concoctions(calculated_concoctions);
+	}
+</script>
+</head>
+<body>
+<div id="calculator-body">
+<div id="benefitwrap">
+<div id="benefits">
+<h1>Requested Benefits</h1>
+</div>
+<button name="Clear" value="Clear" onClick="JavaScript:populate_benefits_list()">Clear</button>
+<button name="Calculate" value="Calculate" onClick="JavaScript:calculate_concoctions()">Calculate</button>
+<div id="errors">
+</div>
+</div>
+<div id="concoctions">
+<h1>Concoctions</h1>
+</div>
+</div>
+</body>
+<script type="text/JavaScript">
+populate_benefits_list();
+produce_benefits_reagents_list();
+</script>
+</html>
