@@ -12,7 +12,7 @@ div {
 	}
 div#calculator-body {
 	margin: auto;
-	width: 600px;
+	width: 690px;
 	}
 div#benefitwrap {
 	align: center;
@@ -23,8 +23,6 @@ div#benefitwrap {
 div#concoctions {
 	float: right;
 	flow: block;
-	overflow: auto;
-	height: 99vh;
 	}
 </style>
 <script type="text/JavaScript">
@@ -417,7 +415,7 @@ function compound_concoctions(requested_benefits) {
 			for (var rc = rb+1; rc < reagents.length; rc++) {
 				var reagent_c = reagents[rc];
 				var three_concoction_benefits = calculate_reagent_benefits([reagent_a, reagent_b, reagent_c]);
-				if (mixture_has_all_benefits(three_concoction_benefits[0], requested_benefits) && (two_concoction_benefits != three_concoction_benefits)) {
+				if (mixture_has_all_benefits(three_concoction_benefits[0], requested_benefits) && (two_concoction_benefits[0].sort() != three_concoction_benefits[0].sort())) {
 					var concoction = [[reagent_a, reagent_b, reagent_c], three_concoction_benefits[0], three_concoction_benefits[1]];
 					concoctions.push(concoction);
 					}
@@ -427,10 +425,14 @@ function compound_concoctions(requested_benefits) {
 	return concoctions;
 	}
 
-function display_concoctions(concoctions) {
+function clear_concoctions() {
 	concoctions_div = document.getElementById("concoctions");
-	concoctions_div.innerHTML = '';
-	concoctions_div.innerHTML += "<h1>Concoctions</h1>\n";
+	concoctions_div.innerHTML = "<h1>Concoctions</h1>\n";
+	return concoctions_div;
+	}
+
+function display_concoctions(concoctions) {
+	concoctions_div = clear_concoctions();
 	for (var i in concoctions) {
 		concoction_reagents = concoctions[i][0].sort();
 		concoction_benefits = concoctions[i][1].sort();
@@ -451,13 +453,9 @@ function display_concoctions(concoctions) {
 
 function calculate_concoctions() {
 	required_benefits = collate_benefits();
-	error_notifications = document.getElementById("errors");
 	if (required_benefits.length == 0) {
-		error_notifications.innerHTML = "<p>Please select at least one benefit!</p>\n";
+		clear_concoctions();
 		return;
-		}
-	else {
-		error_notifications.innerHTML = "";
 		}
 	calculated_concoctions = compound_concoctions(required_benefits);
 	display_concoctions(calculated_concoctions);
